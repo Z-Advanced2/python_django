@@ -1,0 +1,38 @@
+import boto3
+import logging
+import zlib
+import base64
+import re
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+ssm = boto3.client('ssm')
+
+def lambda_handler(event, context):
+    logger.info("Event: " + str(event))
+    data = zlib.decompress(base64.b64decode(event['awslogs']['data']), 16+zlib.MAX_WBITS)
+    logger.info("Message: " + str(data))
+    
+    pathinf = re.findall('/nouhin/.*index.html',str(data))
+
+    print(pathinf)
+    key1 = pathinf[0]
+    try:
+        res = ssm.send_command(
+            InstanceIds = ["i-0bfe9cbfbb030639f"],
+            DocumentName = "AWS-RunShellScript",
+            Parameters = {
+                "commands": [
+                    "cd /home/ec2-user/git/work/python",
+                    "python test.py " + key1
+                ],
+                "executionTimeout":["3600"],
+                "workingDirectory":["/home/ec2-user/git/work/python"]
+            },
+        )
+        print(res)
+  
+    except Exception as e:
+        logger.error(e)
+        raise e
