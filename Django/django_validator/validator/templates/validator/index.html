@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html" charset="utf-8" />
+    <title>Validation Request</title>
+  </head>
+  <form method="post">
+    {% csrf_token %}
+    <body>
+      <p>There are top page of Validation request.</p>
+      <p> Target : {{currentpath}} </p>
+      <style type="text/css">
+        input{
+          width:100%;
+        }
+      </style>  
+      {{forms}}
+    </body>
+    {% block content %}
+      <p>Html files</p>
+      <ul>
+        <p>
+        <select name="selected" size="10">
+        {% for htmlfile in object_dir %}
+          <option value={{ htmlfile }}>{{ htmlfile }}</option>
+        {% endfor %}
+        </select>
+        </p>
+      </ul>
+    {% endblock %}
+    <body/>
+   </bode>
+    <input type="submit" value="Submit" /><br />
+    <body>
+      <textarea name="list" rows="30" cols="100" readonly="readonly">
+      {{lists}}
+      </textarea>
+    </body>
+  </form>
+</html>
